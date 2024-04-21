@@ -2,6 +2,7 @@ import controllers/context.{type ControllerContext}
 import dto/post.{decode_create_post_req, encode_post, encode_posts_pagination}
 import gleam/http.{Get, Post}
 import gleam/string_builder
+import middlewares/auth
 import repositories/posts as posts_repository
 import utils/params.{parse_int_fallback}
 import utils/query_pagination.{get_query_pagination}
@@ -30,6 +31,7 @@ pub fn get(req: Request, ctx: ControllerContext) -> Response {
 }
 
 pub fn post(req: Request, ctx: ControllerContext) -> Response {
+  use req <- auth.middleware(req)
   use json <- wisp.require_json(req)
 
   let decoded = decode_create_post_req(json)

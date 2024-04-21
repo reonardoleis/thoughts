@@ -26,6 +26,7 @@ pub fn encode_post(post: PostModel) -> String {
       #("id", json.int(post.id)),
       #("title", json.string(post.title)),
       #("content", json.string(post.content)),
+      #("created_at", json.string(post.created_at)),
     ])
 
   json.to_string(object)

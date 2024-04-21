@@ -1,6 +1,7 @@
 import gleam/dynamic
 import gleam/float
 import gleam/int
+import gleam/io
 import gleam/iterator
 import gleam/pgo
 import gleam/result.{try}
@@ -16,7 +17,7 @@ pub fn create(
     "
     INSERT INTO posts (title, content)
     VALUES ($1, $2)
-    RETURNING id, created_at
+    RETURNING id, created_at::TEXT
     "
 
   let result =
@@ -33,7 +34,10 @@ pub fn create(
       let #(id, created_at) = post
       Ok(models.Post(id, title, content, created_at))
     }
-    Error(err) -> Error(err)
+    Error(err) -> {
+      io.debug(err)
+      Error(err)
+    }
   }
 }
 
@@ -76,7 +80,8 @@ pub fn list(
     })
     |> iterator.to_list
 
-  let pages = float.round(int.to_float(total) /. int.to_float(limit))
+  let pages =
+    float.round(float.ceiling(int.to_float(total) /. int.to_float(limit)))
   let next = int.min(page + 1, pages)
   let prev = int.max(page - 1, 1)
 
