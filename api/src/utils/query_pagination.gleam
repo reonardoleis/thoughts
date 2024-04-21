@@ -35,5 +35,15 @@ pub fn get_query_pagination(query: List(#(String, String))) -> QueryPagination {
   let page = get_or_fail_with("page", query, 1)
   let limit = get_or_fail_with("limit", query, 10)
 
+  let page = case page {
+    x if x > 0 -> x
+    _ -> 1
+  }
+
+  let limit = case limit {
+    x if x > 0 -> x
+    _ -> 10
+  }
+
   #(page, limit)
 }

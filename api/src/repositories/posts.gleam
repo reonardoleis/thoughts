@@ -1,4 +1,6 @@
 import gleam/dynamic
+import gleam/float
+import gleam/int
 import gleam/iterator
 import gleam/pgo
 import gleam/result.{try}
@@ -74,16 +76,9 @@ pub fn list(
     })
     |> iterator.to_list
 
-  let pages = { total / limit } + 1
-  let next = case page + 1 {
-    x if x <= pages -> x
-    _ -> page
-  }
-
-  let prev = case page - 1 {
-    x if x > 0 -> x
-    _ -> page
-  }
+  let pages = float.round(int.to_float(total) /. int.to_float(limit))
+  let next = int.min(page + 1, pages)
+  let prev = int.max(page - 1, 1)
 
   Pagination(posts, total, page, limit, pages, next, prev)
   |> Ok
